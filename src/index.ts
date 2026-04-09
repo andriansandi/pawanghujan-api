@@ -3,7 +3,8 @@ import { cors } from 'hono/cors'
 
 type Bindings = {
   DB: D1Database,
-  AI: any
+  AI: any,
+  API_KEY: string,
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -14,10 +15,18 @@ app.use('*', cors({
   allowMethods: ['POST', 'GET', 'OPTIONS'],
 }))
 
+const authMiddleware = async (c: any, next: any) => {
+  const apiKey = c.req.header('X-Pawang-Key')
+  if (apiKey !== c.env.API_KEY) {
+    return c.json({ success: false, error: 'Unidentified Pawang!' }, 401)
+  }
+  await next()
+}
+
 app.get('/', (c) => c.text('API Pawang Hujan Ready!'))
 
 // --- ENDPOINT LOG LOCATION ---
-app.post('/log-location', async (c) => {
+app.post('/log-location', authMiddleware, async (c) => {
   try {
     const { lat, lon, location_name, chance, weather_type } = await c.req.json()
 
@@ -33,7 +42,7 @@ app.post('/log-location', async (c) => {
   }
 })
 
-app.post('/get-quote', async (c) => {
+app.post('/get-quote', authMiddleware, async (c) => {
   try {
     const { weather, location } = await c.req.json()
 
