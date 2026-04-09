@@ -11,7 +11,7 @@ const app = new Hono<{ Bindings: Bindings }>()
 
 // Setup CORS
 app.use('*', cors({
-  origin: ['https://pawanghujan.xyz', 'http://localhost:5173'], 
+  origin: ['https://pawanghujan.xyz', 'http://localhost:5173', 'http://127.0.0.1:5173'], 
   allowMethods: ['POST', 'GET', 'OPTIONS'],
 }))
 
@@ -47,11 +47,13 @@ app.post('/log-location', authMiddleware, async (c) => {
 app.post('/get-quote', authMiddleware, async (c) => {
   try {
     const { weather, location } = await c.req.json()
+    console.log(c.req.json())
 
     // Prompt estetik ala anak senja
-    const prompt = `Berikan satu kalimat puitis singkat tentang cuaca ${weather} di ${location}. 
-                    Gunakan gaya bahasa santai anak senja Indonesia, jangan kaku. 
-                    Maksimal 12 kata. Langsung ke kalimatnya tanpa tanda kutip.`
+    const prompt = `Tulis sebuah sajak sangat singkat (2-3 baris) tentang cuaca ${weather} di ${location}. 
+                    Gunakan gaya bahasa puitis anak muda Indonesia yang sedang galau atau kontemplatif. 
+                    Gunakan baris baru (newline) untuk memisahkan baris sajaknya. 
+                    Maksimal 20 kata. Langsung saja ke sajaknya tanpa tanda kutip.`;
 
     const result = await c.env.AI.run("@cf/meta/llama-3-8b-instruct", {
       messages: [
