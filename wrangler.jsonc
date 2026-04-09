@@ -8,5 +8,8 @@
       "database_name": "pawanghujan-db", 
       "database_id": "b81ee825-2a11-43d3-9ea0-278cd34ca6f5"
     }
-  ]
+  ],
+  "ai": {
+    "binding": "AI" 
+  }
 }
