@@ -17,7 +17,9 @@ app.use('*', cors({
 
 const authMiddleware = async (c: any, next: any) => {
   const apiKey = c.req.header('X-Pawang-Key')
-  if (apiKey !== c.env.API_KEY) {
+  
+  if (!c.env.API_KEY || !apiKey || apiKey !== c.env.API_KEY) {
+    console.log("Unauthorized access attempt"); // Cek di console wrangler
     return c.json({ success: false, error: 'Unidentified Pawang!' }, 401)
   }
   await next()
